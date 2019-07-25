@@ -9,8 +9,10 @@ function App() {
   return (
     <>
       <Nav />
-      <Route path="/" exact component={Home} />
-      <Route path="/profile" component={Profile} />
+      <div className="body">
+        <Route path="/" exact component={Home} />
+        <Route path="/profile" component={Profile} />
+      </div>
     </>
   );
 }
