@@ -8,6 +8,7 @@ import Auth from './Auth/Auth';
 import Public from './Public';
 import Private from './Private';
 import Courses from './Courses';
+import PrivateRoute from './PrivateRoute';
 
 class App extends Component {
   constructor(props) {
@@ -31,7 +32,7 @@ class App extends Component {
             path="/callback"
             render={props => <Callback auth={this.auth} {...props} />}
           />
-          <Route
+          {/* <Route
             path="/profile"
             render={props =>
               this.auth.isAuthenticated() ? (
@@ -40,19 +41,22 @@ class App extends Component {
                   <Redirect to="/" />
                 )
             }
-          />
+          /> */}
+          <PrivateRoute path="/profile" component={Profile} auth={this.auth} />
           <Route path="/public" component={Public} />
-          <Route
+          <PrivateRoute path="/private" component={Private} auth={this.auth} />
+          <PrivateRoute path="/course" component={Private} auth={this.auth} scopes={['read:courses']} />
+          {/* <Route
             path="/private"
             render={props => this.auth.isAuthenticated() ?
               (
                 <Private auth={this.auth} {...props} />
               ) : (
-                this.auth.login
+                this.auth.login()
               )
             }
-          />
-          <Route
+          /> */}
+          {/* <Route
             path="/course"
             render={props =>
               this.auth.isAuthenticated() &&
@@ -60,10 +64,10 @@ class App extends Component {
                 (
                   <Courses auth={this.auth} {...props} />
                 ) : (
-                  this.auth.login
+                  this.auth.login()
                 )
             }
-          />
+          /> */}
         </div>
       </>
     );

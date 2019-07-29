@@ -27,7 +27,7 @@ export default class Auth {
             if (authResult && authResult.accessToken && authResult.idToken) {
                 debugger;
                 this.setSession(authResult);
-                const redirectLocation = localStorage.getItem(REDIRECT_ON_LOGIN) === "undefined" ? "/" : JSON.stringify(localStorage.getItem(REDIRECT_ON_LOGIN));
+                const redirectLocation = localStorage.getItem(REDIRECT_ON_LOGIN) === "undefined" ? "/" : JSON.parse(localStorage.getItem(REDIRECT_ON_LOGIN));
                 // this.history.push('/');
                 this.history.push(redirectLocation);
             } else if (err) {
