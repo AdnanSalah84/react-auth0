@@ -4,13 +4,14 @@ export default class Auth {
     constructor(history) {
         this.history = history;
         this.userProfile = null;
+        this.requestedScopes = 'openid profile email read:courses';
         this.auth0 = new auth0.WebAuth({
             domain: process.env.REACT_APP_AUTH0_DOMAIN,
             clientID: process.env.REACT_APP_AUTH0_CLIENT_ID,
             audience: process.env.REACT_APP_AUTH0_AUDIENCE,
             redirectUri: process.env.REACT_APP_AUTH0_CALLBACK_URL,
             responseType: "token id_token",
-            scope: "openid profile"
+            scope: this.requestedScopes
         });
     }
 
@@ -38,9 +39,16 @@ export default class Auth {
             authResult.expiresIn * 1000 + new Date().getTime()
         );
 
+        // If there is a value on the `scope` param from the authResult,
+        // use it to scopes in the session for the user. Otherwise
+        // use the scopes as requested. if no scopes were requested,
+        // set it to nothing.
+        const scopes = authResult.scope || this.requestedScopes || '';
+
         localStorage.setItem('access_token', authResult.accessToken);
         localStorage.setItem('id_token', authResult.idToken);
         localStorage.setItem('expires_at', expiresAt);
+        localStorage.setItem('scopes', JSON.stringifys(scopes));
     }
 
     isAuthenticated() {
@@ -52,6 +60,7 @@ export default class Auth {
         localStorage.removeItem('access_token');
         localStorage.removeItem('id_token');
         localStorage.removeItem('expires_at');
+        localStorage.removeItem('scopes');
         this.userProfile = null;
         // this.history.push('/');
         this.auth0.logout({
@@ -73,5 +82,10 @@ export default class Auth {
         this.auth0.client.userInfo(this.getAccessToken(), (err, profile) => {
             cb(profile, err);
         });
+    }
+
+    userHasScopes(scopes) {
+        const grantedScopes = (JSON.stringify(localStorage.getItem('scopes')) || "").split(" ");
+        return scopes.every(scope => grantedScopes.includes(scope));
     }
 }
