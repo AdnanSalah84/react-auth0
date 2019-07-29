@@ -4,7 +4,7 @@ export default class Auth {
     constructor(history) {
         this.history = history;
         this.userProfile = null;
-        this.requestedScopes = 'openid profile email read:courses';
+        this.requestedScopes = "openid profile email read:courses";
         this.auth0 = new auth0.WebAuth({
             domain: process.env.REACT_APP_AUTH0_DOMAIN,
             clientID: process.env.REACT_APP_AUTH0_CLIENT_ID,
@@ -43,12 +43,12 @@ export default class Auth {
         // use it to scopes in the session for the user. Otherwise
         // use the scopes as requested. if no scopes were requested,
         // set it to nothing.
-        const scopes = authResult.scope || this.requestedScopes || '';
+        const scopes = authResult.scope || this.requestedScopes || "";
 
         localStorage.setItem('access_token', authResult.accessToken);
         localStorage.setItem('id_token', authResult.idToken);
         localStorage.setItem('expires_at', expiresAt);
-        localStorage.setItem('scopes', JSON.stringifys(scopes));
+        localStorage.setItem('scopes', JSON.stringify(scopes));
     }
 
     isAuthenticated() {
@@ -85,7 +85,9 @@ export default class Auth {
     }
 
     userHasScopes(scopes) {
-        const grantedScopes = (JSON.stringify(localStorage.getItem('scopes')) || "").split(" ");
+        const grantedScopes = (
+            JSON.parse(localStorage.getItem("scopes")) || ""
+        ).split(" ");
         return scopes.every(scope => grantedScopes.includes(scope));
     }
 }

@@ -2,7 +2,7 @@ const express = require('express');
 require('dotenv').config();
 var jwt = require('express-jwt'); // Validate JWT and set req.user
 var jwksRSA = require('jwks-rsa'); // Retrieve RSA keys from JSON Web Key set (JWKS) endpoint
-var checkScope = require('express-jwt-authz'); // Validate JWT scopes
+const checkScope = require("express-jwt-authz"); // Validate JWT scopes
 
 var checkJwt = jwt({
     // Dynamically provide a signing key based on the kid in the header
@@ -36,12 +36,29 @@ app.get('/private', checkJwt, function (reg, res) {
     })
 });
 
-app.get('/courses', checkJwt, checkScope(['read:courses']), function (reg, res) {
+app.get("/course", checkJwt, checkScope(["read:courses"]), function (req, res) {
     res.json({
         courses: [
-            { id: 1, title: 'Building Apps with React and Redux' },
-            { id: 2, title: 'Creating Resable React Components' }
+            { id: 1, title: "Building Apps with React and Redux" },
+            { id: 2, title: "Creating Reusable React Components" }
         ]
+    });
+});
+
+function checkRole(role) {
+    return function (req, res, next) {
+        const assignedRoles = req.user['http://localhost:3000/roles'];
+        if (Array.isArray(assignedRoles) && assignedRoles.includes(role)) {
+            return next();
+        } else {
+            return res.status(401).send('Insufficient role');
+        }
+    }
+}
+
+app.get('/admin', checkJwt, checkRole('admin'), function (reg, res) {
+    res.json({
+        message: 'Hello from an admin API'
     })
 });
 

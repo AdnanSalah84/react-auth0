@@ -16,8 +16,8 @@ class Nav extends Component {
                         )}
                     </li>
                     <li>
-                        {isAuthenticated() && userHasScopes(['read:courses']) && (
-                            <Link to="/courses">Courses</Link>
+                        {isAuthenticated() && userHasScopes(["read:courses"]) && (
+                            <Link to="/course">Courses</Link>
                         )}
                     </li>
                     <li>
